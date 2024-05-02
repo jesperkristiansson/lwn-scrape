@@ -14,8 +14,6 @@ def main():
 
     page = requests.get(args.url)
 
-    lines = page.text.split('\n')
-
     article_multiline_regex = re.compile(r'class="IndexEntry".*\n.*<a href="(.*)/">(.*)</a> \((.*)\)</p>')
     articles = set(re.findall(article_multiline_regex, page.text))
 
