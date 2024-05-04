@@ -2,6 +2,7 @@ import requests
 import re
 import time
 import argparse
+import html
 
 #@profile
 def main():
@@ -19,5 +20,7 @@ def main():
 
     sorted_articles = sorted(articles, key=lambda t: int(t[0][10:]),reverse=args.reverse)
     article_string_generator = (f'{title}\nhttps://lwn.net{link}\n{date}' for link, title, date in sorted_articles)
-    print('\n\n'.join(article_string_generator))
+    out = '\n\n'.join(article_string_generator)
+    out = html.unescape(out)
+    print(out)
 main()
