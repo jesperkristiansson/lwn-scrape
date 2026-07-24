@@ -22,10 +22,17 @@ def main():
 
     sorted_articles = sorted(articles, key=lambda t: int(t[0][10:]),reverse=args.reverse)
 
-    subscriptionCutoffDatetime = datetime.now() - timedelta(weeks=2)
+    def twoThursdaysAgo():
+        today = datetime.today().date()
+        daysSinceThursday = (today.weekday() - 3) % 7
+        daysBack = daysSinceThursday + 7
+        targetThursday = today - timedelta(days=daysBack)
+        return targetThursday
+
+    subscriptionCutoffDatetime = twoThursdaysAgo()
     cutoffIndex = 0
     for i, e in reversed(list(enumerate(sorted_articles))):
-        dt = datetime.strptime(e[2], "%B %d, %Y")
+        dt = datetime.strptime(e[2], "%B %d, %Y").date()
         if dt < subscriptionCutoffDatetime:
             cutoffIndex = i + 1
             break
