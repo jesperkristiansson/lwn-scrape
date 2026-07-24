@@ -18,9 +18,11 @@ def main():
     page = requests.get(args.url)
 
     article_multiline_regex = re.compile(r'class="IndexEntry".*\n.*<a href="(.*)/">(.*)</a> \((.*)\)</p>')
-    articles = set(re.findall(article_multiline_regex, page.text))
+    articles = {
+            (link, title, datetime.strptime(date, "%B %d, %Y").date())
+            for link, title, date in article_multiline_regex.findall(page.text)}
 
-    sorted_articles = sorted(articles, key=lambda t: int(t[0][10:]),reverse=args.reverse)
+    sorted_articles = sorted(articles, key=lambda t: t[2],reverse=args.reverse)
 
     def twoThursdaysAgo():
         today = datetime.today().date()
@@ -33,14 +35,14 @@ def main():
     cutoffIndex = 0
     if args.reverse:
         for i, e in list(enumerate(sorted_articles)):
-            dt = datetime.strptime(e[2], "%B %d, %Y").date()
-            if dt < subscriptionCutoffDatetime:
+            articleDate = e[2]
+            if articleDate < subscriptionCutoffDatetime:
                 cutoffIndex = i
                 break
     else:
         for i, e in reversed(list(enumerate(sorted_articles))):
-            dt = datetime.strptime(e[2], "%B %d, %Y").date()
-            if dt < subscriptionCutoffDatetime:
+            articleDate = e[2]
+            if articleDate < subscriptionCutoffDatetime:
                 cutoffIndex = i + 1
                 break
 
