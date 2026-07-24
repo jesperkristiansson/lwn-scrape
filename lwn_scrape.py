@@ -31,11 +31,18 @@ def main():
 
     subscriptionCutoffDatetime = twoThursdaysAgo()
     cutoffIndex = 0
-    for i, e in reversed(list(enumerate(sorted_articles))):
-        dt = datetime.strptime(e[2], "%B %d, %Y").date()
-        if dt < subscriptionCutoffDatetime:
-            cutoffIndex = i + 1
-            break
+    if args.reverse:
+        for i, e in list(enumerate(sorted_articles)):
+            dt = datetime.strptime(e[2], "%B %d, %Y").date()
+            if dt < subscriptionCutoffDatetime:
+                cutoffIndex = i
+                break
+    else:
+        for i, e in reversed(list(enumerate(sorted_articles))):
+            dt = datetime.strptime(e[2], "%B %d, %Y").date()
+            if dt < subscriptionCutoffDatetime:
+                cutoffIndex = i + 1
+                break
 
     preCutoffArticles = sorted_articles[:cutoffIndex]
     postCutoffArticles = sorted_articles[cutoffIndex:]
