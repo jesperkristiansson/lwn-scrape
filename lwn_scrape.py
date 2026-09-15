@@ -19,9 +19,12 @@ def isRead(readArticlesNumbers, articleNumber):
     return articleNumber in readArticlesNumbers
 
 def loadReadArticles(path):
-    with open(path, 'r') as f:
-        data = f.read()
-    return {int(line) for line in data.splitlines() if line}
+    try:
+        with open(path, 'r') as f:
+            data = f.read()
+        return {int(line) for line in data.splitlines() if line}
+    except FileNotFoundError:
+        return set()
 
 def getUserInput(message, validInputs):
     validInputsString = ",".join(validInputs)
