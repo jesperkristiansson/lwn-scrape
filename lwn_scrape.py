@@ -6,14 +6,32 @@ import html
 
 from datetime import datetime, timedelta
 
+def isRead(readArticlesNumbers, article):
+    articleLink = article[0]
+    lastSlashIndex = articleLink.rfind('/')
+    if lastSlashIndex == -1:
+        print(f'Error: could not find article number in {articleLink}')
+        return False
+
+    articleNumber = int(articleLink[lastSlashIndex+1:])
+    return articleNumber in readArticlesNumbers
+
+def loadReadArticles(path):
+    with open(path, 'r') as f:
+        data = f.read()
+    return {int(line) for line in data.splitlines() if line}
+
 #@profile
 def main():
     parser = argparse.ArgumentParser(description='Scrapes all articles from lwn.net and presents them in chronological order')
 
     parser.add_argument('--url', default='https://lwn.net/Kernel/Index/', type=str, help='The URL to the page containing links to articles')
     parser.add_argument('--reverse', '-r', action='store_true', help='Reverse order of articles (newest first)')
+    parser.add_argument('--pastArticles', '-p', default='pastArticles.dat', help='File which contains the id of articles which have already been read')
 
     args = parser.parse_args()
+
+    readArticles = loadReadArticles(args.pastArticles)
 
     page = requests.get(args.url)
 
@@ -51,7 +69,8 @@ def main():
 
     def articleToString(article):
         link, title, date = article
-        return f'{title}\nhttps://lwn.net{link}\n{date}'
+        hasBeenRead = isRead(readArticles, article)
+        return f'{title}{" (read)" if hasBeenRead else ""}\nhttps://lwn.net{link}\n{date}'
 
     delimiter = '\n\n'
 
