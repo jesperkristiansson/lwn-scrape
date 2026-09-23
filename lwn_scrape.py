@@ -124,12 +124,13 @@ def main():
         print("Articles not needing subcription:\n")
         newlyReadArticles |= readArticlesInteractively(preCutoffArticles)
 
-        print(f"Read articles {newlyReadArticles}")
-        action = getUserInput(f'Add these articles as read to {args.pastArticles}', ['y', 'n'])
-        if action == 'y':
-            with open(args.pastArticles, 'a') as f:
-                for articleNumber in newlyReadArticles:
-                    f.write(f'{articleNumber}\n')
+        if newlyReadArticles:
+            print(f"Read articles {newlyReadArticles}")
+            action = getUserInput(f'Add these articles as read to {args.pastArticles}', ['y', 'n'])
+            if action == 'y':
+                with open(args.pastArticles, 'a') as f:
+                    for articleNumber in newlyReadArticles:
+                        f.write(f'{articleNumber}\n')
     else:
         delimiter = '\n\n'
 
